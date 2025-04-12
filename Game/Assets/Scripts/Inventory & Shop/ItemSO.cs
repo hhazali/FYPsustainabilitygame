@@ -11,4 +11,5 @@ public class ItemSO : ScriptableObject
 
     public bool isGold;
     public int price;
+    public int stackSize = 99;
 }

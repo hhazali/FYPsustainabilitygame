@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edd2d88a9ff0a2c489eae1c2d17ce72a, type: 3}
   m_Name: Plastic Bag
   m_EditorClassIdentifier: 
-  itemName: 
-  itemDescription: 
-  icon: {fileID: 0}
+  itemName: Plastic Bag
+  itemDescription: What in carnation!
+  icon: {fileID: 21300000, guid: f6b7831bf978bd94b83db9212193ca7d, type: 3}
   isGold: 0
   price: 0
+  stackSize: 99

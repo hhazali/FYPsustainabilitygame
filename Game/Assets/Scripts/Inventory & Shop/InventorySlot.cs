@@ -23,12 +23,12 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
 
     private void OnEnable()
     {
-        ShopManager.OnShopStateChanged += HandleShopStateChanged;
+        ShopKeeper.OnShopStateChanged += HandleShopStateChanged;
     }
 
     private void OnDisable()
     {
-        ShopManager.OnShopStateChanged -= HandleShopStateChanged;
+        ShopKeeper.OnShopStateChanged -= HandleShopStateChanged;
     }
 
     private void HandleShopStateChanged(ShopManager shopManager, bool isOpen)
@@ -38,15 +38,29 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(quantity > 0)
+        if (quantity > 0)
         {
-            if(eventData.button == PointerEventData.InputButton.Left)
+            if (eventData.button == PointerEventData.InputButton.Left)
             {
-                if(activeShop != null)
+                if (activeShop != null)
                 {
-                    activeShop.SellItem(itemSO);
-                    quantity--;
-                    UpdateUI();
+                    if (activeShop.currentMode == ShopMode.Sell)
+                    {
+                        bool sold = activeShop.SellItem(itemSO);
+                        if (sold)
+                        {
+                            quantity--;
+                            UpdateUI();
+                        }
+                        else
+                        {
+                            Debug.Log("Item not in SellShop, cannot be sold.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Cannot sell items in Buy mode.");
+                    }
                 }
                 else
                 {
@@ -55,6 +69,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
             }
         }
     }
+
 
     public void UpdateUI(){
         if(quantity <= 0)

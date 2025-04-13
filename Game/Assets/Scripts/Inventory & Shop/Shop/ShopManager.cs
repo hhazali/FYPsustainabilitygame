@@ -1,26 +1,19 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ShopMode { Buy, Sell }
+
 public class ShopManager : MonoBehaviour
 {
-    public static event Action<ShopManager, bool> OnShopStateChanged;
-
-    [SerializeField] private List<ShopItems> shopItems;
-
     [SerializeField] private ShopSlot[] shopSlots;
-
     [SerializeField] private InventoryManager inventoryManager;
 
-    private void Start()
-    {
-        PopulateShopItems();
-        OnShopStateChanged?.Invoke(this, true);
-    }
+    public ShopMode currentMode { get; private set; }
 
-    public void PopulateShopItems()
+    public void PopulateShopItems(List<ShopItems> shopItems, ShopMode mode)
     {
+        currentMode = mode;
+
         for (int i = 0; i < shopItems.Count && i < shopSlots.Length; i++)
         {
             ShopItems shopItem = shopItems[i];
@@ -34,45 +27,47 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    public void TryBuyItem (ItemSO itemSO, int price)
+    public void TryBuyItem(ItemSO itemSO, int price)
     {
-        if (itemSO != null && inventoryManager.gold >=price)
+        if (currentMode != ShopMode.Buy || itemSO == null)
+            return;
+
+        if (inventoryManager.gold >= price && HasSpaceForItem(itemSO))
         {
-            if (HasSpaceForItem(itemSO))
+            inventoryManager.gold -= price;
+            inventoryManager.goldText.text = inventoryManager.gold.ToString();
+            inventoryManager.AddItem(itemSO, 1);
+        }
+    }
+
+    public bool SellItem(ItemSO itemSO)
+    {
+        if (itemSO == null)
+            return false;
+
+        foreach (var slot in shopSlots)
+        {
+            if (slot.itemSO == itemSO)
             {
-                inventoryManager.gold -= price;
+                inventoryManager.gold += slot.price;
                 inventoryManager.goldText.text = inventoryManager.gold.ToString();
-                inventoryManager.AddItem(itemSO, 1);
+                return true; // Only return true if item was found in SellShop
             }
         }
+
+        return false; // Item wasn't part of the SellShop
     }
 
     private bool HasSpaceForItem(ItemSO itemSO)
     {
         foreach (var slot in inventoryManager.itemSlots)
         {
-            if(slot.itemSO == itemSO && slot.quantity < itemSO.stackSize)
+            if (slot.itemSO == itemSO && slot.quantity < itemSO.stackSize)
                 return true;
-            else if(slot.itemSO == null)
+            else if (slot.itemSO == null)
                 return true;
         }
         return false;
-    }
-
-    public void SellItem(ItemSO itemSO)
-    {
-        if(itemSO == null)
-            return;
-
-        foreach (var slot in shopSlots)
-        {
-            if(slot.itemSO == itemSO)
-            {
-                inventoryManager.gold += slot.price;
-                inventoryManager.goldText.text = inventoryManager.gold.ToString();;
-                return;
-            }
-        }
     }
 }
 

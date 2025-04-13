@@ -59,4 +59,32 @@ public class InventoryManager : MonoBehaviour
             Debug.Log("trying to use item: " + slot.itemSO.itemName);
         }
     }
+
+    public bool HasItem(ItemSO itemSO)
+    {
+        foreach (var slot in itemSlots)
+        {
+            if (slot.itemSO == itemSO && slot.quantity > 0)
+                return true;
+        }
+        return false;
+    }
+
+    public void RemoveItem(ItemSO itemSO, int amount)
+    {
+        foreach (var slot in itemSlots)
+        {
+            if (slot.itemSO == itemSO && slot.quantity >= amount)
+            {
+                slot.quantity -= amount;
+                if (slot.quantity <= 0)
+                {
+                    slot.itemSO = null;
+                }
+
+                slot.UpdateUI(); // Ensure UI updates
+                return;
+            }
+        }
+    }
 }

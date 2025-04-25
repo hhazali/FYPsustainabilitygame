@@ -2,38 +2,26 @@ using UnityEngine;
 
 public class TargetIndicator : MonoBehaviour
 {
-    public Transform target; // Loot
-    public Transform player; // Player
+    public Transform Target;
+    public float Hide;
 
-    public float heightAbovePlayer = 2f;
+    void Update(){
+        var dir = Target.position - transform.position;
 
-    void Update()
-    {
-        if (target == null || player == null)
-        {
-            gameObject.SetActive(false); // Hide if nothing to point to
-            return;
+        if(dir.magnitude < Hide){
+            SetChildrenActive(false);
+        }
+        else{
+            SetChildrenActive(true);
         }
 
-        // Position above the player
-        transform.position = player.position + Vector3.up * heightAbovePlayer;
-
-        // Point toward the target loot
-        Vector2 direction = (target.position - transform.position).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
-    public void SetTarget(Transform newTarget)
-    {
-        Debug.Log("TargetIndicator: Set target to " + newTarget.name);
-        target = newTarget;
-        gameObject.SetActive(true);
-    }
-
-    public void ClearTarget()
-    {
-        target = null;
-        gameObject.SetActive(false);
+    void SetChildrenActive(bool value){
+        foreach(Transform child in transform){
+            child.gameObject.SetActive(value);
+        }
     }
 }

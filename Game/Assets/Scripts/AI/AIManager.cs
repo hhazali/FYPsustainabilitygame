@@ -80,11 +80,24 @@ public class AIManager : MonoBehaviour
     void SendHelpPrompt()
     {
         Debug.Log("AI: Player is struggling. Show help prompt.");
-        // You can add UI prompts to assist the player
+
+        // Find the TargetIndicator and enable showing the arrow
+        TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
+        if (indicator != null)
+        {
+            indicator.ShowIndicator = true;
+        }
     }
 
     void IncreaseDifficulty()
     {
         Debug.Log("AI: Player is doing well. Increasing difficulty.");
+
+        // Hide the indicator if player is doing fine
+        TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
+        if (indicator != null)
+        {
+            indicator.ShowIndicator = false;
+        }
     }
 }

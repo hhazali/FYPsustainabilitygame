@@ -7,6 +7,8 @@ public class TargetIndicator : MonoBehaviour
     public float HeightAbovePlayer = 2f;
     public float Hide = 1.5f;        // Hide indicator when close to target
 
+    public bool ShowIndicator = false;
+
     void LateUpdate()
     {
         if (Target == null || Player == null)
@@ -21,8 +23,8 @@ public class TargetIndicator : MonoBehaviour
         // Direction from indicator to target
         Vector2 dir = Target.position - transform.position;
 
-        // Show or hide indicator based on distance
-        if (dir.magnitude < Hide)
+        // Show or hide indicator based on distance and AIManager permission
+        if (!ShowIndicator || dir.magnitude < Hide)
         {
             SetChildrenActive(false);
         }

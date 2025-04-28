@@ -124,5 +124,8 @@ public class AIManager : MonoBehaviour
         {
             indicator.ClearTarget();
         }
+
+        // Increase loot spawn rate
+        LootSpawner.Instance.IncreaseLootSpawnRate();  // This will decrease the spawn interval
     }
 }

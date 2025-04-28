@@ -2,16 +2,26 @@ using UnityEngine;
 
 public class TargetIndicator : MonoBehaviour
 {
-    public Transform Target;
-    public Transform Player;
-    public float Hide;
+    public Transform Target;         // The loot/item to point toward
+    public Transform Player;         // The player to follow
+    public float HeightAbovePlayer = 2f;
+    public float Hide = 1.5f;        // Hide indicator when close to target
 
-    void Update()
+    void LateUpdate()
     {
-        if (Target == null || Player == null) return;
+        if (Target == null || Player == null)
+        {
+            SetChildrenActive(false);
+            return;
+        }
 
-        var dir = Target.position - transform.position;
+        // Position above the player
+        transform.position = Player.position + Vector3.up * HeightAbovePlayer;
 
+        // Direction from indicator to target
+        Vector2 dir = Target.position - transform.position;
+
+        // Show or hide indicator based on distance
         if (dir.magnitude < Hide)
         {
             SetChildrenActive(false);
@@ -19,17 +29,10 @@ public class TargetIndicator : MonoBehaviour
         else
         {
             SetChildrenActive(true);
-        }
 
-        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-    }
-
-    void SetChildrenActive(bool value)
-    {
-        foreach (Transform child in transform)
-        {
-            child.gameObject.SetActive(value);
+            // Rotate to point toward the target
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
     }
 
@@ -45,8 +48,11 @@ public class TargetIndicator : MonoBehaviour
         SetChildrenActive(false);
     }
 
-    public void Show()
+    void SetChildrenActive(bool value)
     {
-        SetChildrenActive(true);
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(value);
+        }
     }
 }

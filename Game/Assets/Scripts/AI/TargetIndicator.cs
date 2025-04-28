@@ -9,6 +9,27 @@ public class TargetIndicator : MonoBehaviour
 
     public bool ShowIndicator = false;
 
+    private void Start()
+    {
+        if (AIManager.Instance != null)
+        {
+            AIManager.Instance.OnStruggleStatusChanged += HandleStruggleStatusChanged;
+        }
+    }
+
+    void HandleStruggleStatusChanged(bool isStruggling)
+    {
+        ShowIndicator = isStruggling;
+    }
+
+    private void OnDestroy()
+    {
+        if (AIManager.Instance != null)
+        {
+            AIManager.Instance.OnStruggleStatusChanged -= HandleStruggleStatusChanged;
+        }
+    }
+
     void LateUpdate()
     {
         if (Target == null || Player == null)

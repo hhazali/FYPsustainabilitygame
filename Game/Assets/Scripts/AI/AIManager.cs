@@ -9,6 +9,7 @@ public class AIManager : MonoBehaviour
 
     public float timeThreshold = 30f; // Time to consider as struggling
     public int trashPickupThreshold = 5; // Considered successful if player picks this many within threshold
+    public event Action<bool> OnStruggleStatusChanged;
 
     private float timer;
     private int trashPicked;
@@ -80,24 +81,12 @@ public class AIManager : MonoBehaviour
     void SendHelpPrompt()
     {
         Debug.Log("AI: Player is struggling. Show help prompt.");
-
-        // Find the TargetIndicator and enable showing the arrow
-        TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
-        if (indicator != null)
-        {
-            indicator.ShowIndicator = true;
-        }
+        OnStruggleStatusChanged?.Invoke(true);
     }
 
     void IncreaseDifficulty()
     {
         Debug.Log("AI: Player is doing well. Increasing difficulty.");
-
-        // Hide the indicator if player is doing fine
-        TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
-        if (indicator != null)
-        {
-            indicator.ShowIndicator = false;
-        }
+        OnStruggleStatusChanged?.Invoke(false);
     }
 }

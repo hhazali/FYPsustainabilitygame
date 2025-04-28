@@ -21,11 +21,13 @@ public class Loot : MonoBehaviour
         this.name = itemSO.itemName;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision){
-        if(collision.CompareTag("Player")){
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Player"))
+        {
             anim.Play("LootPickup");
             OnItemLooted?.Invoke(itemSO, quantity);
-            Destroy(gameObject, .5f);
+            Destroy(gameObject, .5f);  // Destroy loot after pickup animation
         }
     }
 }

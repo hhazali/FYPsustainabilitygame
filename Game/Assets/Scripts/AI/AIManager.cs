@@ -82,11 +82,47 @@ public class AIManager : MonoBehaviour
     {
         Debug.Log("AI: Player is struggling. Show help prompt.");
         OnStruggleStatusChanged?.Invoke(true);
+
+        // Find random plastic loot to point at
+        TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
+        if (indicator == null)
+        {
+            Debug.LogWarning("AI: No TargetIndicator found!");
+            return;
+        }
+
+        List<Loot> plasticLoots = new List<Loot>();
+
+        foreach (Loot loot in FindObjectsOfType<Loot>())
+        {
+            if (loot != null && loot.itemSO.itemName.ToLower().Contains("plastic"))
+            {
+                plasticLoots.Add(loot);
+            }
+        }
+
+        if (plasticLoots.Count == 0)
+        {
+            Debug.Log("AI: No trash left.");
+            indicator.ClearTarget();
+            return;
+        }
+
+        // Pick a random plastic loot
+        Loot chosenLoot = plasticLoots[UnityEngine.Random.Range(0, plasticLoots.Count)];
+        indicator.SetTarget(chosenLoot.transform);
     }
 
     void IncreaseDifficulty()
     {
         Debug.Log("AI: Player is doing well. Increasing difficulty.");
         OnStruggleStatusChanged?.Invoke(false);
+
+        // Optionally clear the target when player is not struggling
+        TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
+        if (indicator != null)
+        {
+            indicator.ClearTarget();
+        }
     }
 }

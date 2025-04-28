@@ -5,7 +5,7 @@ public class TargetIndicator : MonoBehaviour
     public Transform Target;         // The loot/item to point toward
     public Transform Player;         // The player to follow
     public float HeightAbovePlayer = 2f;
-    public float Hide = 1.5f;        // Hide indicator when close to target
+    public float Hide = 1.5f;         // Hide indicator when close to target
 
     public bool ShowIndicator = false;
 

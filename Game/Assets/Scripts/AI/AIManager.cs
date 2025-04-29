@@ -12,8 +12,10 @@ public class AIManager : MonoBehaviour
     public event Action<bool> OnStruggleStatusChanged;
 
     private float timer;
+    private float trashCheckInterval = 5f; // Interval for checking if trash is left (in seconds)
     private int trashPicked;
     private bool tracking;
+    private float trashCheckTimer;
 
     private GameplayLogger logger;
 
@@ -50,6 +52,14 @@ public class AIManager : MonoBehaviour
         if (!tracking) return;
 
         timer += Time.deltaTime;
+        trashCheckTimer += Time.deltaTime;
+
+        // Check for trash more frequently
+        if (trashCheckTimer >= trashCheckInterval)
+        {
+            CheckForTrashLeft();
+            trashCheckTimer = 0f; // Reset the timer
+        }
 
         if (timer >= timeThreshold)
         {
@@ -61,9 +71,6 @@ public class AIManager : MonoBehaviour
             {
                 IncreaseDifficulty(); // If player is efficient
             }
-
-            // Check if no trash is left in the game
-            CheckForTrashLeft();
 
             // Reset for next cycle
             StartTracking();
@@ -137,7 +144,9 @@ public class AIManager : MonoBehaviour
         OnStruggleStatusChanged?.Invoke(false);
 
         if (logger != null)
-        logger.OnPromptTriggered(PromptType.SpawnMore);
+        {
+            logger.OnPromptTriggered(PromptType.SpawnMore);
+        }
 
         // Clear any help target
         TargetIndicator indicator = FindObjectOfType<TargetIndicator>();

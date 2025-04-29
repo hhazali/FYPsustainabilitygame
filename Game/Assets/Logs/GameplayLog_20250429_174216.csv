@@ -1,0 +1,17 @@
+TimeSinceStart,TrashPicked,PromptsTriggered,PromptType
+4.34,1,0,None
+4.98,1,1,SpawnMore
+8.58,2,1,None
+9.98,2,2,SpawnMore
+11.88,3,2,None
+14.99,3,3,SpawnMore
+19.99,3,4,HelpHint
+22.42,4,4,None
+24.66,5,4,None
+24.99,5,5,SpawnMore
+26.86,6,5,None
+27.36,7,5,None
+30.00,7,6,SpawnMore
+35.00,7,7,HelpHint
+35.76,8,7,None
+40.01,8,8,SpawnMore

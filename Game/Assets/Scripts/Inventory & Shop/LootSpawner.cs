@@ -32,7 +32,7 @@ public class LootSpawner : MonoBehaviour
     {
         if (lootPrefabs == null || lootPrefabs.Count == 0)
         {
-            Debug.LogError("LootSpawner: No loot prefabs assigned! Cannot spawn loot.");
+            Debug.LogError("LootSpawner: No loot prefabs available! Cannot spawn loot.");
             return;
         }
 

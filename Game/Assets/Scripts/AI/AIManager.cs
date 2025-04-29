@@ -118,14 +118,21 @@ public class AIManager : MonoBehaviour
         Debug.Log("AI: Player is doing well. Increasing difficulty.");
         OnStruggleStatusChanged?.Invoke(false);
 
-        // Optionally clear the target when player is not struggling
+        // Clear any help target
         TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
         if (indicator != null)
         {
             indicator.ClearTarget();
         }
 
-        // Increase loot spawn rate
-        LootSpawner.Instance.IncreaseLootSpawnRate();  // This will decrease the spawn interval
+        // Tell LootSpawner to spawn new loot manually
+        if (LootSpawner.Instance != null)
+        {
+            LootSpawner.Instance.SpawnLootItem();
+        }
+        else
+        {
+            Debug.LogWarning("AIManager: No LootSpawner found.");
+        }
     }
 }

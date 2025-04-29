@@ -6,78 +6,75 @@ public class LootSpawner : MonoBehaviour
 {
     public static LootSpawner Instance;
 
-    public GameObject lootPrefab;          // The loot prefab (which is what you're spawning)
-    public Transform[] spawnPoints;        // The points in the game where loot can spawn
-    public float initialSpawnInterval = 5f; // Default interval between loot spawns
-    private float currentSpawnInterval;    // The current interval, which can change based on difficulty
+    [Header("Loot Settings")]
+    public List<GameObject> lootPrefabs;        // List of loot prefabs
+    public Transform[] spawnPoints;             // Points where loot can spawn
 
-    // For visualization of spawn points in the Scene view
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;  // Color for the spawn points
+        Gizmos.color = Color.red;
         foreach (var spawnPoint in spawnPoints)
         {
-            Gizmos.DrawSphere(spawnPoint.transform.position, 0.2f);  // Draw a small sphere at the spawn point
+            if (spawnPoint != null)
+                Gizmos.DrawSphere(spawnPoint.transform.position, 0.2f);
         }
     }
 
     private void Awake()
     {
-        // Singleton pattern to ensure only one LootSpawner exists
         if (Instance == null)
             Instance = this;
         else
             Destroy(gameObject);
     }
 
-    private void Start()
+    public void SpawnLootItem()
     {
-        currentSpawnInterval = initialSpawnInterval;  // Set the spawn interval
-        StartCoroutine(SpawnLoot());  // Start spawning loot
-    }
-
-    // Coroutine to spawn loot periodically
-    private IEnumerator SpawnLoot()
-    {
-        while (true)
+        if (lootPrefabs == null || lootPrefabs.Count == 0)
         {
-            yield return new WaitForSeconds(currentSpawnInterval);
-            SpawnLootItem();  // Spawn a loot item at a random spawn point
+            Debug.LogError("LootSpawner: No loot prefabs assigned! Cannot spawn loot.");
+            return;
         }
-    }
 
-    private void SpawnLootItem()
-    {
+        if (spawnPoints.Length == 0)
+        {
+            Debug.LogWarning("LootSpawner: No spawn points assigned!");
+            return;
+        }
+
+        // Pick a random loot prefab from the list
+        GameObject selectedLootPrefab = lootPrefabs[Random.Range(0, lootPrefabs.Count)];
+
+        if (selectedLootPrefab == null)
+        {
+            Debug.LogError("LootSpawner: Selected loot prefab is null!");
+            return;
+        }
+
+        // Pick a random spawn point
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        // Check if there's already loot at the spawn point
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPoint.position, 0.5f);  // Adjust radius as needed
 
-        // Check for overlap and ensure it is not loot (by checking tag)
+        // Check if something is already there
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPoint.position, 0.5f);
+
         bool isOverlapLoot = false;
         foreach (var collider in colliders)
         {
-            if (collider.CompareTag("Loot"))  // Check if the collider is tagged as "Loot"
+            if (collider.CompareTag("Loot"))
             {
                 isOverlapLoot = true;
-                break;  // Exit loop early if we find loot overlap
+                break;
             }
         }
 
-        // If there's no loot overlap, spawn loot
         if (!isOverlapLoot)
         {
-            Instantiate(lootPrefab, spawnPoint.position, Quaternion.identity);
+            Instantiate(selectedLootPrefab, spawnPoint.position, Quaternion.identity);
+            Debug.Log("LootSpawner: Spawned " + selectedLootPrefab.name + " at " + spawnPoint.position);
         }
         else
         {
-            Debug.LogWarning("Loot spawn failed: Overlap detected with loot.");
+            Debug.LogWarning("LootSpawner: Overlap detected at spawn point. Skipping spawn.");
         }
-    }
-
-    // Method to increase loot spawn rate (decrease spawn interval)
-    public void IncreaseLootSpawnRate()
-    {
-        currentSpawnInterval = Mathf.Max(1f, currentSpawnInterval - 1f);  // Never allow spawn interval to go below 1 second
-        Debug.Log("Loot spawn rate increased! Current interval: " + currentSpawnInterval);
     }
 }

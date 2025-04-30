@@ -11,12 +11,14 @@ public class AIManager : MonoBehaviour
     public int trashPickupThreshold = 5; // Considered successful if player picks this many within threshold
     public event Action<bool> OnStruggleStatusChanged;
 
-    private float timer;
+    private float timer = 0f;
     private float trashCheckInterval = 5f; // Interval for checking if trash is left (in seconds)
     private int trashPicked;
     private bool tracking;
-    private float trashCheckTimer;
+    private float trashCheckTimer = 0f;
     private bool gameEnded = false;
+    private float increaseDifficultyCooldown = 0f;
+    private float increaseDifficultyInterval = 15f; // e.g., allow IncreaseDifficulty every 30 seconds
 
     private GameplayLogger logger;
 
@@ -54,6 +56,7 @@ public class AIManager : MonoBehaviour
 
         timer += Time.deltaTime;
         trashCheckTimer += Time.deltaTime;
+        increaseDifficultyCooldown += Time.deltaTime;
 
         if (trashCheckTimer >= trashCheckInterval)
         {
@@ -69,7 +72,11 @@ public class AIManager : MonoBehaviour
             }
             else
             {
-                IncreaseDifficulty();
+                if (increaseDifficultyCooldown >= increaseDifficultyInterval)
+                {
+                    IncreaseDifficulty();
+                    increaseDifficultyCooldown = 0f;
+                }
             }
 
             StartTracking();
@@ -189,6 +196,11 @@ public class AIManager : MonoBehaviour
 
         Debug.Log("Game Over: No trash left to pick up.");
         Time.timeScale = 0;
+
+        if (logger != null)
+    {
+        logger.EndSessionAndLabel();
+    }
 
         // UIManager.Instance.ShowGameOverScreen(); // optional
     }

@@ -16,6 +16,7 @@ public class AIManager : MonoBehaviour
     private int trashPicked;
     private bool tracking;
     private float trashCheckTimer;
+    private bool gameEnded = false;
 
     private GameplayLogger logger;
 
@@ -49,30 +50,28 @@ public class AIManager : MonoBehaviour
 
     void Update()
     {
-        if (!tracking) return;
+        if (!tracking || gameEnded) return;
 
         timer += Time.deltaTime;
         trashCheckTimer += Time.deltaTime;
 
-        // Check for trash more frequently
         if (trashCheckTimer >= trashCheckInterval)
         {
             CheckForTrashLeft();
-            trashCheckTimer = 0f; // Reset the timer
+            trashCheckTimer = 0f;
         }
 
         if (timer >= timeThreshold)
         {
             if (trashPicked < trashPickupThreshold)
             {
-                SendHelpPrompt(); // If player is struggling
+                SendHelpPrompt();
             }
             else
             {
-                IncreaseDifficulty(); // If player is efficient
+                IncreaseDifficulty();
             }
 
-            // Reset for next cycle
             StartTracking();
         }
     }
@@ -140,22 +139,18 @@ public class AIManager : MonoBehaviour
 
     void IncreaseDifficulty()
     {
+        if (gameEnded) return;
+
         Debug.Log("AI: Player is doing well. Increasing difficulty.");
         OnStruggleStatusChanged?.Invoke(false);
 
         if (logger != null)
-        {
             logger.OnPromptTriggered(PromptType.SpawnMore);
-        }
 
-        // Clear any help target
         TargetIndicator indicator = FindObjectOfType<TargetIndicator>();
         if (indicator != null)
-        {
             indicator.ClearTarget();
-        }
 
-        // Tell LootSpawner to spawn new loot manually
         if (LootSpawner.Instance != null)
         {
             LootSpawner.Instance.SpawnLootItem();
@@ -187,16 +182,14 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    // New method to end the game
     void EndGame()
     {
+        if (gameEnded) return;
+        gameEnded = true;
+
         Debug.Log("Game Over: No trash left to pick up.");
+        Time.timeScale = 0;
 
-        // Optionally pause the game
-        Time.timeScale = 0; // Freezes the game
-
-        // Trigger any UI or additional actions to show the game-over message
-        // Example: Display a "Game Over" message
-        // UIManager.Instance.ShowGameOverScreen();
+        // UIManager.Instance.ShowGameOverScreen(); // optional
     }
 }

@@ -1,0 +1,9 @@
+TimeSinceStart,TrashPicked,HelpHints,SpawnMores,PromptType,Label
+4.34,1,0,0,None,
+5.90,2,0,0,None,
+11.08,3,0,0,None,
+14.98,3,0,1,SpawnMore,
+15.02,4,0,1,None,
+24.99,4,1,1,HelpHint,
+28.52,5,1,1,None,
+29.99,5,1,1,Final,1

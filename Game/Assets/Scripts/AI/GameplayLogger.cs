@@ -71,13 +71,31 @@ public class GameplayLogger : MonoBehaviour
     {
         float timeSinceStart = Time.time - sessionStartTime;
 
-        // Labeling logic based on time
-        int label = (timeSinceStart <= timeThresholdForEfficient) ? 1 : 0;
+        // Criteria for efficient gameplay (Label = 1)
+        bool isEfficient = trashPickedCount >= 4 && helpHintCount <= 2 && spawnMoreCount <= 2;
 
-        // Log the final entry, including the label
+        // Criteria for struggling gameplay (Label = 0)
+        bool isStruggling = trashPickedCount < 4 || helpHintCount >= 3;
+
+        int label;
+        if (isEfficient)
+        {
+            label = 1; // Efficient gameplay
+        }
+        else if (isStruggling)
+        {
+            label = 0; // Struggling gameplay
+        }
+        else
+        {
+            // This could be a "balanced" session where neither efficiency nor struggle is dominant
+            label = 1; // Default to 1 (could adjust this based on further insights)
+        }
+
+        // Log the final entry with the label
         string finalEntry = $"{timeSinceStart:F2},{trashPickedCount},{helpHintCount},{spawnMoreCount},Final,{label}\n";
         File.AppendAllText(logFilePath, finalEntry);
 
-        Debug.Log($"GameplayLogger: Session ended with label {label} (time: {timeSinceStart:F2}s)");
+        Debug.Log($"GameplayLogger: Session ended with label {label} (time: {timeSinceStart:F2}s, trash picked: {trashPickedCount}, help hints: {helpHintCount}, difficulty increases: {spawnMoreCount})");
     }
 }

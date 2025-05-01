@@ -89,7 +89,7 @@ public class PlayerPerformanceSimulator : MonoBehaviour
             }
 
             aiManager.TrackPickup(new ItemSO { itemName = "Plastic" }, 1);
-            yield return new WaitForSeconds(6f); // Player collects trash every 3 seconds
+            yield return new WaitForSeconds(10f); // Player collects trash every 3 seconds
         }
     }
 

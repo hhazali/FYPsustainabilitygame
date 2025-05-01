@@ -90,7 +90,7 @@ public class AIManager : MonoBehaviour
         tracking = true;
     }
 
-    void TrackPickup(ItemSO item, int qty)
+    public void TrackPickup(ItemSO item, int qty)
     {
         Debug.Log($"TrackPickup called with: {item.itemName}, qty: {qty}");
 
@@ -99,13 +99,13 @@ public class AIManager : MonoBehaviour
             trashPicked += qty;
             Debug.Log($"Trash picked updated: {trashPicked}");
 
-            // ✨ Log trash pickup
+            // Log trash pickup
             if (logger != null)
                 logger.OnTrashPicked();
         }
     }
 
-    void SendHelpPrompt()
+    public void SendHelpPrompt()
     {
         Debug.Log("AI: Player is struggling. Show help prompt.");
         OnStruggleStatusChanged?.Invoke(true);

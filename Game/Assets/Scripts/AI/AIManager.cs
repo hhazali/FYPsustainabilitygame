@@ -195,13 +195,15 @@ public class AIManager : MonoBehaviour
         gameEnded = true;
 
         Debug.Log("Game Over: No trash left to pick up.");
-        Time.timeScale = 0;
+        Time.timeScale = 0; // Pausing the game
 
+        // End session and label gameplay based on the AI model
         if (logger != null)
-    {
-        logger.EndSessionAndLabel();
-    }
+        {
+            logger.EndSessionAndLabel();
+        }
 
+        // You can also trigger a Game Over screen or additional actions here.
         // UIManager.Instance.ShowGameOverScreen(); // optional
     }
 }

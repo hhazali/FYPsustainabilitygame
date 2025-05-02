@@ -144,7 +144,7 @@ public class AIManager : MonoBehaviour
         indicator.SetTarget(chosenLoot.transform);
     }
 
-    void IncreaseDifficulty()
+    public void IncreaseDifficulty()
     {
         if (gameEnded) return;
 

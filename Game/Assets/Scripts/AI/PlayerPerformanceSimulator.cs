@@ -7,6 +7,7 @@ public class PlayerPerformanceSimulator : MonoBehaviour
     public enum PerformanceType
     {
         Good,
+        Medium,
         Poor
     }
 
@@ -28,13 +29,17 @@ public class PlayerPerformanceSimulator : MonoBehaviour
 
     void SimulatePlayerPerformance()
     {
-        if (performanceType == PerformanceType.Good)
+        switch (performanceType)
         {
-            StartCoroutine(SimulateGoodPlayer());
-        }
-        else if (performanceType == PerformanceType.Poor)
-        {
-            StartCoroutine(SimulatePoorPlayer());
+            case PerformanceType.Good:
+                StartCoroutine(SimulateGoodPlayer());
+                break;
+            case PerformanceType.Medium:
+                StartCoroutine(SimulateMediumPlayer());
+                break;
+            case PerformanceType.Poor:
+                StartCoroutine(SimulatePoorPlayer());
+                break;
         }
     }
 
@@ -57,7 +62,41 @@ public class PlayerPerformanceSimulator : MonoBehaviour
 
             // Simulate fast trash pickup (e.g., pickup trash every 1 second)
             aiManager.TrackPickup(new ItemSO { itemName = "Plastic" }, 1);
-            yield return new WaitForSeconds(1f); // Player collects trash every second
+            yield return new WaitForSeconds(6f); // Player collects trash every second
+        }
+    }
+
+    private IEnumerator SimulateMediumPlayer()
+    {
+        while (true)
+        {
+            if (!isMoving)
+            {
+                Loot targetLoot = FindRandomLoot();
+                if (targetLoot != null)
+                {
+                    targetPosition = targetLoot.transform.position;
+                    isMoving = true;
+                    StartCoroutine(MoveToTarget(targetLoot.transform));
+                }
+            }
+
+            // Chance-based help prompt
+            if (UnityEngine.Random.value < 0.3f)
+            {
+                aiManager.SendHelpPrompt();
+            }
+
+            // Chance-based spawn more
+            if (UnityEngine.Random.value < 0.2f)
+            {
+                aiManager.IncreaseDifficulty();
+            }
+
+            aiManager.TrackPickup(new ItemSO { itemName = "Plastic" }, 1);
+
+            float waitTime = UnityEngine.Random.Range(4f, 6f);
+            yield return new WaitForSeconds(waitTime); // Moderate speed trash pickup
         }
     }
 
